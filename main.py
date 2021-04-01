@@ -1,7 +1,6 @@
 #!/usr/bin/python
 import pygame, sys, random
 
-
 # color tuples 
 WHITE = (255, 255, 255)
 ORANGE = (255, 140, 0)
@@ -32,13 +31,12 @@ class Ball:
         self.x += self.x_vel
         self.y += self.y_vel
     def draw(self, window):
-        pygame.draw.rect(window, WHITE, (self.x, self.y, BALL_WIDTH, BALL_HEIGHT))
+        pygame.draw.rect(window, GREEN, (self.x, self.y, BALL_WIDTH, BALL_HEIGHT))
     def reset(self):
         self.x = (RES_X // 2) - (BALL_WIDTH // 2)
         self.y = (RES_Y // 2) - (BALL_HEIGHT // 2)
-        self.y_vel = 5 * random.choice([1, -1])
-        self.x_vel = 5 * random.choice([1, -1])
-        
+        self.y_vel = 0
+        self.x_vel = 5
 
 class Paddle:
     def __init__(self, x_pos):
@@ -58,11 +56,9 @@ class Paddle:
         self.y = (RES_Y // 2) - (PADDLE_HEIGHT // 2)
         self.y_vel = 5       
         
-
-
 def window_clear(window):
     window.fill(BG)
-    pygame.draw.line(window, WHITE, [RES_X // 2, 0], [RES_X // 2, RES_Y])
+    pygame.draw.line(window, ORANGE, [RES_X // 2, 0], [RES_X // 2, RES_Y])
 
 def game_reset():
     player_paddle.reset()
@@ -81,10 +77,13 @@ def main():
     ai_paddle     = Paddle(RES_X - PADDLE_WIDTH - 10)
     ball = Ball()
 
-    
     # game loop
     while True:
+        
+        # clear window 
         window_clear(window)
+        
+        # update and draw pieces
         player_paddle.update_position()
         player_paddle.draw(window)
         ai_paddle.update_position()
@@ -101,34 +100,27 @@ def main():
             if(ball.y in range(player_paddle.y, player_paddle.y + PADDLE_HEIGHT) or
                 (ball.y + BALL_HEIGHT) in range(player_paddle.y, player_paddle.y + PADDLE_HEIGHT)):
                 ball.x_vel = -ball.x_vel
+                ball.y_vel = random.choice([1, 2, 5]) * random.choice([-1, 1])
         if(ball.x + BALL_WIDTH == ai_paddle.x):
             if(ball.y in range(ai_paddle.y, ai_paddle.y + PADDLE_HEIGHT) or
                 (ball.y + BALL_HEIGHT) in range(ai_paddle.y, ai_paddle.y + PADDLE_HEIGHT)):
                 ball.x_vel = -ball.x_vel
+                ball.y_vel = random.choice([1, 2, 5]) * random.choice([-1, 1])
 
         # make AI paddle chase ball when it's in the AI's court
         if(ball.x > RES_X // 2):
             ai_center = ai_paddle.y + (PADDLE_HEIGHT // 2)
             if(ball.y > ai_center):
-                ai_paddle.y_vel = 3
+                ai_paddle.y_vel = 4
             elif(ball.y < ai_center):
-                ai_paddle.y_vel = -3
+                ai_paddle.y_vel = -4
         else:
             ai_paddle.y_vel = 0
         
-        '''
-        # test
-        if(ball.x < RES_X // 2):
-            player_center = player_paddle.y + (PADDLE_HEIGHT // 2)
-            if(ball.y > player_center):
-                player_paddle.y_vel = 5
-            elif(ball.y < player_center):
-                player_paddle.y_vel = -5
-        else:
-            player_paddle.y_vel = 0
-        '''
-        
+        # draw buffer to screen
         pygame.display.update()
+ 
+        # handle user events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -137,7 +129,8 @@ def main():
                 player_paddle.y_vel = -5
             if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
                 player_paddle.y_vel = 5
-                
+        
+        # for FPS regulation
         clock.tick(60)
 
 
