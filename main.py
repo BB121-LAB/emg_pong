@@ -85,11 +85,11 @@ def main():
         
         # update and draw pieces
         player_paddle.update_position()
-        player_paddle.draw(window)
         ai_paddle.update_position()
-        ai_paddle.draw(window)
         ball.update_position()
         ball.draw(window)
+        player_paddle.draw(window)
+        ai_paddle.draw(window)
         
         # check if ball passes one of the walls
         if(ball.x <= 0 or ball.x >= RES_X):
@@ -108,12 +108,12 @@ def main():
                 ball.y_vel = random.choice([1, 2, 5]) * random.choice([-1, 1])
 
         # make AI paddle chase ball when it's in the AI's court
-        if(ball.x > RES_X // 2):
+        if(ball.x > RES_X // 2 and ball.x_vel > 0):
             ai_center = ai_paddle.y + (PADDLE_HEIGHT // 2)
-            if(ball.y > ai_center):
-                ai_paddle.y_vel = 4
-            elif(ball.y < ai_center):
-                ai_paddle.y_vel = -4
+            if(ball.y > ai_center + 20):
+                ai_paddle.y_vel = 5
+            elif(ball.y < ai_center - 20):
+                ai_paddle.y_vel = -5
         else:
             ai_paddle.y_vel = 0
         
@@ -132,7 +132,6 @@ def main():
         
         # for FPS regulation
         clock.tick(60)
-
 
 if __name__ == '__main__':
     main()
