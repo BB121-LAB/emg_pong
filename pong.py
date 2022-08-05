@@ -43,13 +43,16 @@ class Paddle:
         self.x = x_pos
         self.y = 0
         self.y_vel = 0
+        self.not_edge = 1
         self.reset()
     def update_position(self):
         if(self.y == 0 and self.y_vel < 0):
-            self.y_vel = 0
-        if(self.y == (RES_Y - PADDLE_HEIGHT) and self.y_vel > 0):
-            self.y_vel = 0
-        self.y += self.y_vel
+            self.not_edge = 0
+        elif(self.y == (RES_Y - PADDLE_HEIGHT) and self.y_vel > 0):
+            self.not_edge = 0
+        else:
+            self.not_edge = 1
+        self.y += self.y_vel * self.not_edge
     def draw(self, window):
         pygame.draw.rect(window, WHITE, (self.x, self.y, PADDLE_WIDTH, PADDLE_HEIGHT))
     def reset(self):
@@ -125,10 +128,14 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            """
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 player_paddle.y_vel = -5
             if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
                 player_paddle.y_vel = 5
+            """
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                player_paddle.y_vel *= -1
         
         # for FPS regulation
         clock.tick(60)

@@ -1,0 +1,6 @@
+__pycache__/
+*.spec
+old_builds/
+dist/
+build/
+*.swp
