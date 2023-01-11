@@ -155,7 +155,7 @@ def main():
             if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
                 player_paddle.y_vel = 5
             """
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+            if event.type == pygame.KEYDOWN and (event.key == pygame.K_SPACE or event.key == pygame.K_w):
                 player_paddle.y_vel *= -1
         
         # for FPS regulation
